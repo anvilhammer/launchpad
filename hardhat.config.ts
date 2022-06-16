@@ -17,10 +17,6 @@ import { HardhatUserConfig } from 'hardhat/config'
 import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { removeConsoleLog } from 'hardhat-preprocessor'
 
-const accounts = {
-  mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
-}
-
 const namedAccounts = {
   deployer: {
     default: 0,
@@ -71,9 +67,9 @@ const config: HardhatUserConfig = {
   },
   namedAccounts,
   networks: {
-    ethereum: {
+    mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
+      accounts: [process.env.MILKOMEDA_PRIVATE_KEY!],
       chainId: 1,
     },
     localhost: {
@@ -92,99 +88,14 @@ const config: HardhatUserConfig = {
       gasPrice: 0,
       initialBaseFeePerGas: 0,
     },
-    ropsten: {
-      url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts,
-      chainId: 3,
-      live: true,
-      saveDeployments: true,
-      tags: ['staging'],
-      gasMultiplier: 15,
-    },
-    rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-      chainId: 4,
-      live: true,
-      saveDeployments: true,
-      tags: ['staging'],
-      gasMultiplier: 15,
-    },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
+    testnet: {
+      url: `https://milktestnet:${process.env.MILKOMEDA_TESTNET_API_KEY}@milkomeda-testnet.blockfrost.io/api/v0/`,
+      accounts: [process.env.MILKOMEDA_PRIVATE_KEY!],
       chainId: 5,
       live: true,
       saveDeployments: true,
       tags: ['staging'],
       gasMultiplier: 15,
-    },
-    kovan: {
-      url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-      chainId: 42,
-      live: true,
-      saveDeployments: true,
-      tags: ['staging'],
-      gasMultiplier: 10,
-    },
-    avalanche: {
-      url: 'https://api.avax.network/ext/bc/C/rpc',
-      accounts,
-      chainId: 43114,
-      live: true,
-      saveDeployments: true,
-    },
-    polygon: {
-      url: 'https://polygon-rpc.com',
-      accounts,
-      chainId: 137,
-      live: true,
-      saveDeployments: true,
-      gasMultiplier: 2,
-    },
-    fantom: {
-      url: 'https://rpcapi.fantom.network',
-      accounts,
-      chainId: 250,
-      live: true,
-      saveDeployments: true,
-    },
-    harmony: {
-      url: 'https://api.harmony.one',
-      accounts,
-      chainId: 1666600000,
-      live: true,
-      saveDeployments: true,
-      gasMultiplier: 2,
-    },
-    moonriver: {
-      url: 'https://rpc.moonriver.moonbeam.network',
-      accounts,
-      chainId: 1285,
-      live: true,
-      saveDeployments: true,
-    },
-    moonbeam: {
-      url: 'https://rpc.api.moonbeam.network',
-      accounts,
-      chainId: 1284,
-      live: true,
-      saveDeployments: true,
-    },
-    bsc: {
-      url: 'https://bsc-dataseed.binance.org',
-      accounts,
-      chainId: 56,
-      live: true,
-      saveDeployments: true,
-    },
-    arbitrum: {
-      url: 'https://arb1.arbitrum.io/rpc',
-      accounts,
-      chainId: 42161,
-      live: true,
-      saveDeployments: true,
     },
   },
   preprocess: {
