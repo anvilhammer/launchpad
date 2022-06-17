@@ -11,8 +11,11 @@ const deployFunction: DeployFunction = async function ({
 
   const chainId = parseInt(await getChainId())
 
-  if (!(chainId in WNATIVE_ADDRESS)) {
-    throw Error(`No WETH address for chain ${chainId}!`)
+  let wada
+  if (chainId == 200101) {
+    wada = '0x65a51E52eCD17B641f8F0D1d56a6c9738951FDC9'
+  } else if (chainId == 2001) {
+    wada = '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9'
   }
 
   const { deploy } = deployments
@@ -23,7 +26,7 @@ const deployFunction: DeployFunction = async function ({
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [WNATIVE_ADDRESS[chainId]],
+    args: [wada],
   })
 
   console.log('PostAuctionLauncher deployed at ', address)

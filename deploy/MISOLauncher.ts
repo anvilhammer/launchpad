@@ -13,13 +13,23 @@ const deployFunction: DeployFunction = async function ({
 
   const chainId = parseInt(await getChainId())
 
-  if (!(chainId in BENTOBOX_ADDRESS)) {
-    throw Error(`No BentoBox address for chain ${chainId}!`)
+  let wada
+  if (chainId == 200101) {
+    wada = '0x65a51E52eCD17B641f8F0D1d56a6c9738951FDC9'
+  } else if (chainId == 2001) {
+    wada = '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9'
   }
 
   const { deploy } = deployments
 
   const { deployer } = await getNamedAccounts()
+
+  const boxDeployment = await deploy('BentoBox', {
+    from: deployer,
+    log: true,
+    deterministicDeployment: false,
+    args: [wada],
+  })
 
   const { address } = await deploy('MISOLauncher', {
     from: deployer,
@@ -34,7 +44,7 @@ const deployFunction: DeployFunction = async function ({
   if ((await misoLauncher.accessControls()) === ethers.constants.AddressZero) {
     const accessControls = await ethers.getContract('MISOAccessControls')
     console.log('MISOAccessControls initilising')
-    await (await misoLauncher.initMISOLauncher(accessControls.address, BENTOBOX_ADDRESS[chainId])).wait()
+    await (await misoLauncher.initMISOLauncher(accessControls.address, boxDeployment.address)).wait()
     console.log('MISOAccessControls initilised')
   }
 

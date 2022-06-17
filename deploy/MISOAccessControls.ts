@@ -31,11 +31,11 @@ const deployFunction: DeployFunction = async function ({
     console.log('MISOAccessControls initilised')
   }
 
-  if (!(await accessControls.hasAdminRole(admin))) {
-    console.log('MISOAccessControls adding ' + admin + 'as admin')
-    await (await accessControls.addAdminRole(admin)).wait()
-    console.log('MISOAccessControls added ' + admin + 'as admin')
-  }
+  // if (!(await accessControls.hasAdminRole(admin))) {
+  //   console.log('MISOAccessControls adding ' + admin + 'as admin')
+  //   await (await accessControls.addAdminRole(admin)).wait()
+  //   console.log('MISOAccessControls added ' + admin + 'as admin')
+  // }
 }
 
 export default deployFunction

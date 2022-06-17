@@ -68,9 +68,9 @@ const config: HardhatUserConfig = {
   namedAccounts,
   networks: {
     mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: 'https://rpc.c1.milkomeda.com:8545',
       accounts: [process.env.MILKOMEDA_PRIVATE_KEY!],
-      chainId: 1,
+      chainId: 2001,
     },
     localhost: {
       live: false,
@@ -89,13 +89,13 @@ const config: HardhatUserConfig = {
       initialBaseFeePerGas: 0,
     },
     testnet: {
-      url: `https://milktestnet:${process.env.MILKOMEDA_TESTNET_API_KEY}@milkomeda-testnet.blockfrost.io/api/v0/`,
+      url: 'http://use-util.cloud.milkomeda.com:8545',
       accounts: [process.env.MILKOMEDA_PRIVATE_KEY!],
-      chainId: 5,
+      chainId: 200101,
       live: true,
       saveDeployments: true,
       tags: ['staging'],
-      gasMultiplier: 15,
+      // gasMultiplier: 15,
     },
   },
   preprocess: {

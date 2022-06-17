@@ -3,7 +3,7 @@ import { task } from 'hardhat/config'
 task('add-minter', 'Adds minter')
   .addParam('address', 'New minter')
   .setAction(async function ({ address }, { ethers: { getNamedSigner, getContract } }) {
-    const admin = await getNamedSigner('admin')
+    const admin = await getNamedSigner('deployer')
 
     console.log(`Admin is ${admin.address}`)
 

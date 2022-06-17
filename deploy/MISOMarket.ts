@@ -13,10 +13,6 @@ const deployFunction: DeployFunction = async function ({
 
   const chainId = parseInt(await getChainId())
 
-  if (!(chainId in BENTOBOX_ADDRESS)) {
-    throw Error(`No BentoBox address for chain ${chainId}!`)
-  }
-
   const { deploy } = deployments
 
   const { deployer } = await getNamedAccounts()
@@ -38,13 +34,12 @@ const deployFunction: DeployFunction = async function ({
     const batchAuction = await ethers.getContract('BatchAuction')
     const crowdsale = await ethers.getContract('Crowdsale')
     const dutchAuction = await ethers.getContract('DutchAuction')
-    const hyperbolicAuction = await ethers.getContract('HyperbolicAuction')
     console.log('MISOMarket initilising')
     await (
       await misoMarket.initMISOMarket(
         accessControls.address,
-        BENTOBOX_ADDRESS[chainId],
-        [batchAuction.address, crowdsale.address, dutchAuction.address, hyperbolicAuction.address],
+        '0xF4A376B4c4dcc8c9C538BECE0e47374DB64E2433',
+        [batchAuction.address, crowdsale.address, dutchAuction.address],
         {
           from: deployer,
         }

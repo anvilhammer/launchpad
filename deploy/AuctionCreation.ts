@@ -30,7 +30,7 @@ const deployFunction: DeployFunction = async function ({
       listFactory.address,
       misoLauncher.address,
       misoMarket.address,
-      FACTORY_ADDRESS[chainId],
+      '0x8B06cF15c46eb0A2d42D0767B6ceD723CD8e68A2',
     ],
     deterministicDeployment: false,
   })
