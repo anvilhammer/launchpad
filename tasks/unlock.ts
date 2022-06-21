@@ -1,7 +1,7 @@
 import { task } from 'hardhat/config'
 
 task('unlock', 'Unlocks MISO').setAction(async function (_, { ethers: { getNamedSigner, getContract } }) {
-  const admin = await getNamedSigner('admin')
+  const admin = await getNamedSigner('deployer')
 
   const market = await getContract('MISOMarket', admin)
   const farmFactory = await getContract('MISOFarmFactory', admin)

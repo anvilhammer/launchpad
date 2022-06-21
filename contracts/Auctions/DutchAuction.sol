@@ -62,9 +62,13 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
 
     /// @notice MISOMarket template id for the factory contract.
     /// @dev For different marketplace types, this must be incremented.
-    uint256 public constant override marketTemplate = 2;
+    uint256 public constant override marketTemplate = 0;
     /// @dev The placeholder ETH address.
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+
+    uint256 public fee = 0;
+    uint256 public constant feeDenominator = 10000;
+    address public feeWallet;
 
     /// @notice Main market variables.
     struct MarketInfo {
@@ -354,7 +358,8 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         uint256 unclaimedTokens = IERC20(auctionToken).balanceOf(address(this));
 
         claimerCommitment = commitments[_user].mul(uint256(marketInfo.totalTokens)).div(uint256(marketStatus.commitmentsTotal));
-        claimerCommitment = claimerCommitment.sub(claimed[_user]);
+        uint256 auctionFee = claimerCommitment.mul(fee).div(feeDenominator);
+        claimerCommitment = claimerCommitment.sub(auctionFee).sub(claimed[_user]);
 
         if(claimerCommitment > unclaimedTokens){
             claimerCommitment = unclaimedTokens;
@@ -495,6 +500,10 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
             /// @dev Successful auction
             /// @dev Transfer contributed tokens to wallet.
             _safeTokenPayment(paymentCurrency, wallet, uint256(status.commitmentsTotal));
+            if (fee > 0) {
+                uint256 feeTokens = fee.mul(marketInfo.totalTokens).div(feeDenominator);
+                _safeTokenPayment(auctionToken, feeWallet, feeTokens);
+            }
         } else {
             /// @dev Failed auction
             /// @dev Return auction tokens back to wallet.
@@ -635,6 +644,13 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         wallet = _wallet;
 
         emit AuctionWalletUpdated(_wallet);
+    }
+
+    function setFeeInfo(uint256 _fee, address _feeWallet) external {
+        require(hasAdminRole(msg.sender), "Unauthorized");
+        require(!marketStatus.finalized, "Auction finalized");
+        fee = _fee;
+        feeWallet = _feeWallet;
     }
 
 
