@@ -12,6 +12,7 @@ contract MISOAccessControls is MISOAdminAccess {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant SMART_CONTRACT_ROLE = keccak256("SMART_CONTRACT_ROLE");
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
+    bytes32 public constant USER_ROLE = keccak256("USER_ROLE");
 
     /**
      * @notice The deployer is automatically given the admin role which will allow them to then grant roles to other addresses
@@ -31,6 +32,10 @@ contract MISOAccessControls is MISOAdminAccess {
      */
     function hasMinterRole(address _address) public view returns (bool) {
         return hasRole(MINTER_ROLE, _address);
+    }
+
+    function hasUserRole(address _address) public view returns (bool) {
+        return hasRole(USER_ROLE, _address);
     }
 
     /**
@@ -62,6 +67,10 @@ contract MISOAccessControls is MISOAdminAccess {
      */
     function addMinterRole(address _address) external {
         grantRole(MINTER_ROLE, _address);
+    }
+
+    function addUserRole(address _address) external {
+        grantRole(USER_ROLE, _address);
     }
 
     /**

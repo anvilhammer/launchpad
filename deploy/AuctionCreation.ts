@@ -21,6 +21,7 @@ const deployFunction: DeployFunction = async function ({
   const listFactory = await ethers.getContract('ListFactory')
   const misoLauncher = await ethers.getContract('MISOLauncher')
   const misoMarket = await ethers.getContract('MISOMarket')
+  const accessControl = await ethers.getContract('MISOAccessControls')
 
   const { address } = await deploy('AuctionCreation', {
     from: deployer,
@@ -31,6 +32,7 @@ const deployFunction: DeployFunction = async function ({
       misoLauncher.address,
       misoMarket.address,
       '0x8B06cF15c46eb0A2d42D0767B6ceD723CD8e68A2',
+      accessControl.address,
     ],
     deterministicDeployment: false,
   })

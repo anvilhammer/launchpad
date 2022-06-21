@@ -4,6 +4,7 @@ pragma solidity 0.6.12;
 
 import "../interfaces/IERC20.sol";
 import "../Utils/SafeTransfer.sol";
+import "../Access/MISOAccessControls.sol";
 
 interface IMisoTokenFactory {
   function createToken(
@@ -63,19 +64,28 @@ contract AuctionCreation is SafeTransfer {
   IMisoLauncher public misoLauncher;
   IMisoMarket public misoMarket;
   address public factory;
+  MISOAccessControls public accessControl;
 
   constructor(
     IMisoTokenFactory _misoTokenFactory,
     IPointList _pointListFactory,
     IMisoLauncher _misoLauncher,
     IMisoMarket _misoMarket,
-    address _factory
+    address _factory,
+    address _access
   ) public {
     misoTokenFactory = _misoTokenFactory;
     pointListFactory = _pointListFactory;
     misoLauncher = _misoLauncher;
     misoMarket = _misoMarket;
     factory = _factory;
+    accessControl = MISOAccessControls(_access);
+  }
+
+  function whitelistUser(address _user) external {
+    if (accessControl.hasAdminRole(msg.sender)) {
+      accessControl.addUserRole(_user);
+    }
   }
 
   function prepareMiso(
@@ -86,6 +96,7 @@ contract AuctionCreation is SafeTransfer {
     bytes memory launcherData
   ) external payable {
     require(_accounts.length == _amounts.length, '!len');
+    require(accessControl.hasUserRole(msg.sender), "Unauthorized");
 
     address token = createToken(tokenFactoryData);
 
@@ -93,8 +104,6 @@ contract AuctionCreation is SafeTransfer {
 
     (address newMarket, uint256 tokenForSale) = createMarket(marketData, token, pointList);
 
-    // Miso market has to give admin role to the user, since it's set to this contract initially
-    // to allow the auction wallet to be set to launcher once it's been deployed
     IMisoMarket(newMarket).addAdminRole(msg.sender);
 
     createLauncher(launcherData, token, tokenForSale, newMarket);
