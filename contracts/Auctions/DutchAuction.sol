@@ -68,7 +68,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
 
     uint256 public fee = 0;
     uint256 public constant feeDenominator = 10000;
-    address public feeWallet;
+    address payable public feeWallet;
 
     /// @notice Main market variables.
     struct MarketInfo {
@@ -646,7 +646,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         emit AuctionWalletUpdated(_wallet);
     }
 
-    function setFeeInfo(uint256 _fee, address _feeWallet) external {
+    function setFeeInfo(uint256 _fee, address payable _feeWallet) external {
         require(hasAdminRole(msg.sender), "Unauthorized");
         require(!marketStatus.finalized, "Auction finalized");
         fee = _fee;
