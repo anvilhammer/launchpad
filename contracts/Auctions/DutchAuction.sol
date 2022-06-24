@@ -50,6 +50,8 @@ import "../Utils/BoringERC20.sol";
 import "../Utils/Documents.sol";
 import "../interfaces/IPointList.sol";
 import "../interfaces/IMisoMarket.sol";
+import "../interfaces/IERC20.sol";
+import "../interfaces/IGatekeeper.sol";
 
 /// @notice Attribution to delta.financial
 /// @notice Attribution to dutchswap.com
@@ -62,13 +64,15 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
 
     /// @notice MISOMarket template id for the factory contract.
     /// @dev For different marketplace types, this must be incremented.
-    uint256 public constant override marketTemplate = 0;
+    uint256 public constant override marketTemplate = 1;
     /// @dev The placeholder ETH address.
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     uint256 public fee = 0;
     uint256 public constant feeDenominator = 10000;
     address payable public feeWallet;
+
+    IGatekeeper public gatekeeper;
 
     /// @notice Main market variables.
     struct MarketInfo {
@@ -156,7 +160,8 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         uint256 _minimumPrice,
         address _admin,
         address _pointList,
-        address payable _wallet
+        address payable _wallet,
+        address _gatekeeper
     ) public {
         require(_endTime < 10000000000, "DutchAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_startTime >= block.timestamp, "DutchAuction: start time is before current time");
@@ -181,6 +186,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         auctionToken = _token;
         paymentCurrency = _paymentCurrency;
         wallet = _wallet;
+        gatekeeper = IGatekeeper(_gatekeeper);
 
         initAccessControls(_admin);
 
@@ -324,6 +330,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         public   nonReentrant  
     {
         require(address(paymentCurrency) != ETH_ADDRESS, "DutchAuction: Payment currency is not a token");
+        require(gatekeeper.checkPolicy(_from, _amount), "GET CREAMIER");
         if(readAndAgreedToMarketParticipationAgreement == false) {
             revertBecauseUserDidNotProvideAgreement();
         }
@@ -651,6 +658,11 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         require(!marketStatus.finalized, "Auction finalized");
         fee = _fee;
         feeWallet = _feeWallet;
+    }
+
+    function setGatekeeper(address _gatekeeper) external {
+        require(hasAdminRole(msg.sender), "Unauthorized");
+        gatekeeper = IGatekeeper(_gatekeeper);
     }
 
 
