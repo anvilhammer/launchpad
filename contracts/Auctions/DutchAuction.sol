@@ -693,7 +693,8 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         uint256 _minimumPrice,
         address _admin,
         address _pointList,
-        address payable _wallet
+        address payable _wallet,
+        address gatekeeper
         ) = abi.decode(_data, (
             address,
             address,
@@ -705,9 +706,10 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
             uint256,
             address,
             address,
+            address,
             address
         ));
-        initAuction(_funder, _token, _totalTokens, _startTime, _endTime, _paymentCurrency, _startPrice, _minimumPrice, _admin, _pointList, _wallet);
+        initAuction(_funder, _token, _totalTokens, _startTime, _endTime, _paymentCurrency, _startPrice, _minimumPrice, _admin, _pointList, _wallet, gatekeeper);
     }
 
     /**
