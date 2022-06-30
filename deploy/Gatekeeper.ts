@@ -11,6 +11,7 @@ const deployFunction: DeployFunction = async function ({ deployments, getNamedAc
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    args: ['0xCF8e5f8B7701868Ba71C8E60aEbE211eaAF4eE81'],
   })
 
   console.log('Gatekeeper deployed at ', address)
